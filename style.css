@@ -1,0 +1,23 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#arena {
+    border-collapse: collapse;
+}
+
+.arena-cell {
+    border: 1px solid black;
+    width: 1em;
+    height: 1em;
+}
+
+.player-one-cell {
+    background-color: orange;
+}
+
+.player-two-cell {
+    background-color: red;
+}
