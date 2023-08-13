@@ -22,3 +22,7 @@
 .player-two-cell {
     background-color: red;
 }
+
+.hidden {
+    display: none;
+}

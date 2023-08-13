@@ -5,8 +5,13 @@ const ARENA_CELL_DOM_CLASS = "arena-cell";
 
 const PLAYER_ONE_DOM_CLASS = "player-one-cell";
 const PLAYER_TWO_DOM_CLASS = "player-two-cell";
+const HIDDEN_DOM_CLASS = "hidden";
 
 const WINNER_TEXT_DOM_ID = "winner";
+
+const MODE_SELECTOR_DOM_ID = "mode-selector";
+const MODE_WRAPPER_DOM_ID = "mode-selector-wrapper";
+const MODE_INDICATOR_DOM_ID = "mode-indicator";
 
 const KEYBOARD_ACTIONS = ["w", "s", "a", "d"]; // up, down, left, right
 
@@ -38,6 +43,8 @@ function createArena() {
         arena.push(arenaRow);
         arenaOnDOM.appendChild(rowOnDOM);
     }
+
+    arenaOnDOM.classList.remove(HIDDEN_DOM_CLASS);
 
     return arena;
 }
@@ -124,7 +131,7 @@ function moveRandomAgent(position, arena) {
 }
 
 /**
- * Generate move for player two (AI).
+ * Generate move for player two (AI) based on user's mode selection.
  *
  * @param {number[]} position
  * @param {HTMLTableCellElement[][]} arena
@@ -132,8 +139,28 @@ function moveRandomAgent(position, arena) {
  * @returns {boolean} Move possible?
  */
 function movePlayerTwo(position, arena, mode) {
-    if (mode == "random") return moveRandomAgent(position, arena);
-    return false;
+    if (mode == "Random") return moveRandomAgent(position, arena);
+    throw Error(`Unrecognized mode ${mode}.`);
+}
+
+/**
+ * Fetches user's selection of opponent (agent) mode from DOM.
+ *
+ * Throws an Error if mode cannot be fetched from DOM.
+ *
+ * @returns {string} Mode
+ */
+function initialiseMode() {
+    const mode = document.getElementById(MODE_SELECTOR_DOM_ID).value;
+    if (!mode) throw Error("Could not fetch mode.");
+
+    const modeIndicator = document.getElementById(MODE_INDICATOR_DOM_ID);
+    modeIndicator.classList.remove(HIDDEN_DOM_CLASS);
+    modeIndicator.innerText = `Playing against "${mode}" agent type.`;
+
+    document.getElementById(MODE_WRAPPER_DOM_ID).classList.add(HIDDEN_DOM_CLASS);
+
+    return mode;
 }
 
 /**
@@ -149,10 +176,9 @@ function showWinner(winner) {
  * Kicks-off the game and acts as the controller.
  *
  * Listens for keypress KeyboardEvent for user (player one) move input.
- *
- * @param {string} mode
  */
-function main(mode) {
+function main() {
+    const mode = initialiseMode();
     const playerOnePos = [0, 0];
     const playerTwoPos = [13, 4];
     const arena = createArena();
@@ -177,5 +203,3 @@ function main(mode) {
         }
     });
 }
-
-main("random");

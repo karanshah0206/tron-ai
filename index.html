@@ -15,7 +15,15 @@
 </head>
 <body>
     <h1>Tron</h1>
-    <table id="arena"></table>
+    <div id="mode-selector-wrapper">
+        Select an opponent agent:
+        <select id="mode-selector">
+            <option value="Random">Random Agent</option>
+        </select>
+        <button onclick="main()">Select</button>
+    </div>
+    <p id="mode-indicator" class="hidden"></p>
+    <table id="arena" class="hidden"></table>
     <p id="winner"></p>
 </body>
 </html>
