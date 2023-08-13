@@ -63,8 +63,29 @@ function updateArena(arena, playerOnePos, playerTwoPos) {
 function checkMove(position, arena, playerOne) {
     if (position[0] < 0 || position[0] >= ARENA_ROW_COUNT || position[1] < 0 || position[1] >= ARENA_COL_COUNT)
         return false;
-    const opponentClass = (playerOne) ? PLAYER_TWO_DOM_CLASS : PLAYER_ONE_DOM_CLASS;
-    return !arena[position[0]][position[1]].classList.contains(opponentClass);
+    return arena[position[0]][position[1]].classList.length == 1;
+}
+
+/**
+ * Generate a list of possible moves given the current position.
+ *
+ * @param {number[]} position
+ * @param {HTMLTableCellElement[][]} arena
+ * @returns {number[][]} Possible moves
+ */
+function generatePossibleMoves(position, arena) {
+    const possibleMoves = [];
+
+    const newPosition = [position[0] + 1, position[1]];
+    if (checkMove(newPosition, arena, false)) possibleMoves.push([...newPosition]);
+    newPosition[0] -= 2;
+    if (checkMove(newPosition, arena, false)) possibleMoves.push([...newPosition]);
+    newPosition[0]++; newPosition[1]--;
+    if (checkMove(newPosition, arena, false)) possibleMoves.push([...newPosition]);
+    newPosition[1] += 2;
+    if (checkMove(newPosition, arena, false)) possibleMoves.push([...newPosition]);
+
+    return possibleMoves;
 }
 
 /**
@@ -84,14 +105,32 @@ function movePlayerOne(position, key, arena) {
 }
 
 /**
- * Generate move for player two (AI).
+ * Generate next move for player two randomly.
  *
- * @param {number[]} position 
+ * @param {number[]} position
  * @param {HTMLTableCellElement[][]} arena
  * @returns {boolean} Move possible?
  */
-function movePlayerTwo(position, arena) {
-    // TODO
+function moveRandomAgent(position, arena) {
+    const possibleMoves = generatePossibleMoves(position, arena);
+    if (possibleMoves.length == 0) return false;
+
+    const newPosition = possibleMoves[(Math.floor(Math.random() * possibleMoves.length))];
+    position[0] = newPosition[0];
+    position[1] = newPosition[1];
+    return true;
+}
+
+/**
+ * Generate move for player two (AI).
+ *
+ * @param {number[]} position
+ * @param {HTMLTableCellElement[][]} arena
+ * @param {string} mode
+ * @returns {boolean} Move possible?
+ */
+function movePlayerTwo(position, arena, mode) {
+    if (mode == "random") return moveRandomAgent(position, arena);
     return false;
 }
 
@@ -108,8 +147,10 @@ function showWinner(winner) {
  * Kicks-off the game and acts as the controller.
  *
  * Listens for keypress KeyboardEvent for user (player one) move input.
+ *
+ * @param {string} mode
  */
-function main() {
+function main(mode) {
     const playerOnePos = [0, 0];
     const playerTwoPos = [13, 4];
     const arena = createArena();
@@ -124,7 +165,7 @@ function main() {
         if (!winner && KEYBOARD_ACTIONS.includes(key)) {
             if (movePlayerOne(playerOnePos, key, arena)) {
                 updateArena(arena, playerOnePos, playerTwoPos);
-                if (movePlayerTwo(playerTwoPos, arena))
+                if (movePlayerTwo(playerTwoPos, arena, mode))
                     updateArena(arena, playerOnePos, playerTwoPos);
                 else winner = 1;
             }
@@ -135,4 +176,4 @@ function main() {
     });
 }
 
-main();
+main("random");
