@@ -6,6 +6,8 @@ const ARENA_CELL_DOM_CLASS = "arena-cell";
 const PLAYER_ONE_DOM_CLASS = "player-one-cell";
 const PLAYER_TWO_DOM_CLASS = "player-two-cell";
 
+const WINNER_TEXT_DOM_ID = "winner";
+
 const KEYBOARD_ACTIONS = ["w", "s", "a", "d"]; // up, down, left, right
 
 /**
@@ -140,7 +142,7 @@ function movePlayerTwo(position, arena, mode) {
  * @param {number} winner
  */
 function showWinner(winner) {
-    // TODO
+    document.getElementById(WINNER_TEXT_DOM_ID).innerText = `Player ${winner} wins!`;
 }
 
 /**
