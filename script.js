@@ -6,7 +6,7 @@ const ARENA_CELL_DOM_CLASS = "arena-cell";
 const PLAYER_ONE_DOM_CLASS = "player-one-cell";
 const PLAYER_TWO_DOM_CLASS = "player-two-cell";
 
-const KEYBOARD_ACTIONS = ['w', 's', 'a', 'd']; // up, down, left, right
+const KEYBOARD_ACTIONS = ["w", "s", "a", "d"]; // up, down, left, right
 
 /**
  * Creates and initialises the game arena on the DOM.
@@ -42,7 +42,7 @@ function createArena() {
 
 /**
  * Updates new positions of players on arena.
- * 
+ *
  * @param {HTMLTableCellElement[][]} arena
  * @param {number[]} playerOnePos
  * @param {number[]} playerTwoPos
@@ -53,16 +53,34 @@ function updateArena(arena, playerOnePos, playerTwoPos) {
 }
 
 /**
+ * Check if a move made by a player is possible.
+ *
+ * @param {number[]} position
+ * @param {HTMLTableCellElement[][]} arena
+ * @param {boolean} playerOne
+ * @returns {boolean} Move possible?
+ */
+function checkMove(position, arena, playerOne) {
+    if (position[0] < 0 || position[0] >= ARENA_ROW_COUNT || position[1] < 0 || position[1] >= ARENA_COL_COUNT)
+        return false;
+    const opponentClass = (playerOne) ? PLAYER_TWO_DOM_CLASS : PLAYER_ONE_DOM_CLASS;
+    return !arena[position[0]][position[1]].classList.contains(opponentClass);
+}
+
+/**
  * Move player one (human) based on chosen action.
  *
  * @param {number[]} position
- * @param {number} key
+ * @param {string} key
  * @param {HTMLTableCellElement[][]} arena
  * @returns {boolean} Move possible?
  */
 function movePlayerOne(position, key, arena) {
-    // TODO
-    return false;
+    if (key == "w") position[0]--;
+    else if (key == "s") position[0]++;
+    else if (key == "a") position[1]--;
+    else if (key == "d") position[1]++;
+    return checkMove(position, arena, true);
 }
 
 /**
@@ -106,7 +124,8 @@ function main() {
         if (!winner && KEYBOARD_ACTIONS.includes(key)) {
             if (movePlayerOne(playerOnePos, key, arena)) {
                 updateArena(arena, playerOnePos, playerTwoPos);
-                if (movePlayerTwo(playerTwoPos, arena)) updateArena(arena, playerOnePos, playerTwoPos);
+                if (movePlayerTwo(playerTwoPos, arena))
+                    updateArena(arena, playerOnePos, playerTwoPos);
                 else winner = 1;
             }
             else winner = 2;
