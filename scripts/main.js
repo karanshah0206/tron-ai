@@ -36,7 +36,7 @@ function main() {
         if (!winner && KEYBOARD_ACTIONS.includes(key)) {
             if (movePlayerOne(playerOnePos, key, arena)) {
                 updateArena(arena, playerOnePos, playerTwoPos);
-                if (movePlayerTwo(playerTwoPos, arena, mode))
+                if (movePlayerTwo(playerTwoPos, playerOnePos, arena, mode))
                     updateArena(arena, playerOnePos, playerTwoPos);
                 else winner = 1;
             }
