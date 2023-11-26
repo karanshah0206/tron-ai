@@ -10,10 +10,13 @@ function initialiseMode() {
     if (!mode) throw Error("Could not fetch mode.");
 
     const modeIndicator = document.getElementById(MODE_INDICATOR_DOM_ID);
-    modeIndicator.classList.remove(HIDDEN_DOM_CLASS);
-    modeIndicator.innerText = `Playing against "${mode}" agent type.`;
+    const controlsIndicator = document.getElementById(CONTROLS_INDICATOR_DOM_ID);
 
+    controlsIndicator.classList.remove(HIDDEN_DOM_CLASS);
+    modeIndicator.classList.remove(HIDDEN_DOM_CLASS);
     document.getElementById(MODE_WRAPPER_DOM_ID).classList.add(HIDDEN_DOM_CLASS);
+
+    modeIndicator.innerText = `Playing against "${mode}" agent type.`;
 
     return mode;
 }

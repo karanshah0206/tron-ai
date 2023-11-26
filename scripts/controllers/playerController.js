@@ -60,6 +60,6 @@ function movePlayerOne(position, key, arena) {
  */
 function movePlayerTwo(playerTwoPosition, playerOnePosition, arena, mode) {
     if (mode == "Random") return moveRandomAgent(playerTwoPosition, arena);
-    else if (mode == "Minimax") return moveMinimaxAgent(playerTwoPosition, playerOnePosition, arena);
+    else if (mode == "Depth-Limited Minimax") return moveMinimaxAgent(playerTwoPosition, playerOnePosition, arena);
     throw Error(`Unrecognized mode ${mode}.`);
 }

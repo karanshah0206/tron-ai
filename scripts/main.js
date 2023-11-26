@@ -13,6 +13,7 @@ const MODE_SELECTOR_DOM_ID = "mode-selector";
 const MODE_WRAPPER_DOM_ID = "mode-selector-wrapper";
 const MODE_INDICATOR_DOM_ID = "mode-indicator";
 
+const CONTROLS_INDICATOR_DOM_ID = "controls-indicator";
 const KEYBOARD_ACTIONS = ["w", "s", "a", "d"]; // up, down, left, right
 
 /**

@@ -23,11 +23,12 @@
         Select an opponent agent:
         <select id="mode-selector">
             <option value="Random">Random Agent</option>
-            <option value="Minimax">Minimax Agent</option>
+            <option value="Depth-Limited Minimax">Depth-Limited Minimax Agent</option>
         </select>
         <button onclick="main()">Select</button>
     </div>
     <p id="mode-indicator" class="hidden"></p>
+    <p id="controls-indicator" class="hidden">You are Player One (Yellow). Use 'w' (up), 's' (down), 'a' (left), 'd' (right) to control your agent.</p>
     <table id="arena" class="hidden"></table>
     <p id="winner"></p>
 </body>
