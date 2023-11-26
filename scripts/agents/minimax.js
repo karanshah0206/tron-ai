@@ -1,5 +1,5 @@
 /**
- * A node used to represent a cell on the 2D grid for enabling search.
+ * A node used to represent a cell on the 2D grid (arena) for enabling search.
  *
  * @typedef {Object} CellNode
  * @property {number} shortestDistanceForPlayerOne
@@ -42,7 +42,6 @@ function pickNext(nodesMatrix, frontier, playerOne) {
  * @param {HTMLTableCellElement[][]} arena
  */
 function dijkstra(nodesMatrix, position, playerOne, arena) {
-    // Initialise distances for players' current positions
     if (playerOne) {
         nodesMatrix[position[0]][position[1]].shortestDistanceForPlayerOne = 0;
         nodesMatrix[position[0]][position[1]].exploredForPlayerOne = false;
@@ -127,6 +126,76 @@ function voronoi(arena, playerTwoPosition, playerOnePosition) {
 }
 
 /**
+ * Modify arena to temporarily move player as part of Minimax gameplay simulation.
+ *
+ * @param {number[]} move
+ * @param {HTMLTableCellElement[][]} arena
+ * @param {boolean} playerOne
+ */
+function makeMove(move, arena, playerOne) {
+    arena[move[0]][move[1]].classList.add(playerOne ? PLAYER_ONE_DOM_CLASS : PLAYER_TWO_DOM_CLASS);
+}
+
+/**
+ * Undo the move made by player as part of Minimax gameplay simulation.
+ *
+ * @param {number[]} move
+ * @param {HTMLTableCellElement[][]} arena
+ * @param {boolean} playerOne
+ */
+function undoMove(move, arena, playerOne) {
+    arena[move[0]][move[1]].classList.remove(playerOne ? PLAYER_ONE_DOM_CLASS : PLAYER_TWO_DOM_CLASS);
+}
+
+/**
+ * Returns best utility for AI Agent (Maximiser).
+ *
+ * @param {HTMLTableCellElement[][]} arena
+ * @param {number[]} maximiserPosition
+ * @param {number[]} minimiserPosition
+ * @param {number} depthRemaining
+ * @returns {number} Best utility for maximiser
+ */
+function maximiser(arena, maximiserPosition, minimiserPosition, depthRemaining) {
+    if (depthRemaining <= 0) return voronoi(arena, maximiserPosition, minimiserPosition);
+
+    const moves = generatePossibleMoves(maximiserPosition, arena);
+    let bestUtility = 0;
+
+    moves.forEach(move => {
+        makeMove(move, arena, false);
+        bestUtility = Math.max(bestUtility, minimiser(arena, move, minimiserPosition, depthRemaining - 1));
+        undoMove(move, arena, false);
+    });
+
+    return bestUtility;
+}
+
+/**
+ * Returns best utility for Player One (Minimiser).
+ *
+ * @param {HTMLTableCellElement[][]} arena
+ * @param {number[]} maximiserPosition
+ * @param {number[]} minimiserPosition
+ * @param {number} depthRemaining
+ * @returns {number} Best utility for minimiser
+ */
+function minimiser(arena, maximiserPosition, minimiserPosition, depthRemaining) {
+    if (depthRemaining <= 0) return voronoi(arena, maximiserPosition, minimiserPosition);
+
+    const moves = generatePossibleMoves(minimiserPosition, arena);
+    let bestUtility = Infinity;
+
+    moves.forEach(move => {
+        makeMove(move, arena, true);
+        bestUtility = Math.min(bestUtility, maximiser(arena, maximiserPosition, move, depthRemaining - 1));
+        undoMove(move, arena, true);
+    });
+
+    return bestUtility;
+}
+
+/**
  * Generate next move for player two using depth-limited Minimax.
  *
  * @param {number[]} maximiserPosition
@@ -135,9 +204,26 @@ function voronoi(arena, playerTwoPosition, playerOnePosition) {
  * @returns {boolean} Move possible?
  */
 function moveMinimaxAgent(maximiserPosition, minimiserPosition, arena) {
-    // debugging only
-    console.log(voronoi(arena, maximiserPosition, minimiserPosition));
+    const depthLimit = 4;
 
-    // TODO
-    return true;
+    const moves = generatePossibleMoves(maximiserPosition, arena);
+    let bestMove = null, bestUtility = 0;
+
+    moves.forEach(move => {
+        makeMove(move, arena, false);
+        const minimiserUtility = minimiser(arena, move, minimiserPosition, depthLimit - 1);
+        if (minimiserUtility > bestUtility) {
+            bestUtility = minimiserUtility;
+            bestMove = move;
+        }
+        undoMove(move, arena, false);
+    });
+
+    if (bestMove != null) {
+        maximiserPosition[0] = bestMove[0];
+        maximiserPosition[1] = bestMove[1];
+        return true;
+    }
+
+    return false;
 }
